@@ -35,10 +35,11 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::Pills.Properties.Resources.table;
-            this.ClientSize = new System.Drawing.Size(961, 531);
+            this.ClientSize = new System.Drawing.Size(963, 531);
             this.MaximizeBox = false;
             this.Name = "frmMain";
             this.Text = "Form1";
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseMove);
             this.ResumeLayout(false);
 
         }
