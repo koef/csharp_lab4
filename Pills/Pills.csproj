@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CBall.cs" />
     <Compile Include="CImageBase.cs" />
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
@@ -82,10 +83,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ball.png" />
+    <None Include="Resources\table.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\table.png" />
+    <None Include="Resources\ball.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
