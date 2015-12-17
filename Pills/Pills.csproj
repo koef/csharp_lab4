@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="CBall.cs" />
     <Compile Include="CImageBase.cs" />
+    <Compile Include="CTable.cs" />
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
     </Compile>

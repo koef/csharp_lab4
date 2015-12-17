@@ -24,7 +24,8 @@ namespace Pills
 
         Graphics dc;
 
-        CBall ball1; 
+        //CBall ball1; 
+        CTable _table;
         public frmMain()
         {
             InitializeComponent();
@@ -35,7 +36,9 @@ namespace Pills
         private void GameInit()
         {
             showVector = false;
-            ball1 = new CBall(156, 342);
+            //ball1 = new CBall(156, 342);
+            _table = new CTable();
+            _table.AddBall(156, 342);
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -51,7 +54,11 @@ namespace Pills
             TextRenderer.DrawText(dc, "X=" + _curX.ToString() + "  Y=" + _curY.ToString(), _font,
                 new Rectangle(75, 33, 120, 20), SystemColors.ControlText, _textFlags);
 #endif
-            ball1.DrawImage(dc);
+            //ball1.DrawImage(dc);
+            _table.Balls.ForEach(delegate(CBall ball) 
+            {
+                ball.DrawImage(dc);
+            });
 
             if (showVector)
             {
@@ -72,9 +79,15 @@ namespace Pills
 
         private void frmMain_MouseDown(object sender, MouseEventArgs e)
         {
-            _startVectorX = e.X;
-            _startVectorY = e.Y;
-            showVector = true;
+            CBall _ball;
+            _ball = _table.GetBall(e.X, e.Y);
+
+            if(_ball != null)
+            {
+                _startVectorX = _ball.CenterX;
+                _startVectorY = _ball.CenterY;
+                showVector = true;
+            }
         }
 
         private void frmMain_MouseUp(object sender, MouseEventArgs e)

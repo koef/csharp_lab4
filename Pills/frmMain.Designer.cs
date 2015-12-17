@@ -38,7 +38,7 @@
             this.ClientSize = new System.Drawing.Size(963, 531);
             this.MaximizeBox = false;
             this.Name = "frmMain";
-            this.Text = "Form1";
+            this.Text = "Billiards";
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseUp);

@@ -15,5 +15,34 @@ namespace Pills
             Top = _Top;
         }
 
+        public void Move(int _Left, int _Top)
+        {
+            Left = _Left;
+            Top = _Top;
+        }
+
+        public int CenterX
+        {
+            get
+            {
+                return Left + 15;
+            }
+        }
+
+        public int CenterY
+        {
+            get
+            {
+                return Top + 15;
+            }
+        }
+
+        public int Radius
+        {
+            get
+            {
+                return 15;
+            }
+        }
     }
 }
