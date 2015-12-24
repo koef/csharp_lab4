@@ -9,7 +9,7 @@ namespace Pills
 {
     class CImageBase : IDisposable
     {
-        protected Bitmap _bitmap;
+        private Bitmap _bitmap;
         private int X;
         private int Y;
 

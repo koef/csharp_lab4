@@ -9,10 +9,10 @@ namespace Pills
     class CTable
     {
         List<CBall> _balls;
-        int leftBorder = 50;
-        int rightBorder = 913;
-        int topBorder = 50;
-        int bottomBorder = 480;
+        int _leftBorder = 50;
+        int _rightBorder = 913;
+        int _topBorder = 50;
+        int _bottomBorder = 480;
 
         public List<CBall> Balls
         {
@@ -21,6 +21,11 @@ namespace Pills
                 return _balls;
             }
         }
+
+        public int LeftBorder { get { return _leftBorder; } }
+        public int RightBorder { get { return _rightBorder; } }
+        public int TopBorder { get { return _topBorder; } }
+        public int BottomBorder { get { return _bottomBorder; } }
 
         public CTable()
         {
@@ -41,7 +46,7 @@ namespace Pills
 
         public void AddBall(int x, int y)
         {
-            if(x > leftBorder && x < rightBorder && y > topBorder && y < bottomBorder)
+            if(x > _leftBorder && x < _rightBorder && y > _topBorder && y < _bottomBorder)
             {
                 _balls.Add(new CBall(x, y));
             }

@@ -28,7 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            this.tmrHearbeat = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
+            // 
+            // tmrHearbeat
+            // 
+            this.tmrHearbeat.Enabled = true;
+            this.tmrHearbeat.Interval = 10;
+            this.tmrHearbeat.Tick += new System.EventHandler(this.tmrHearbeat_Tick);
             // 
             // frmMain
             // 
@@ -36,6 +44,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::Pills.Properties.Resources.table;
             this.ClientSize = new System.Drawing.Size(963, 531);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.MaximizeBox = false;
             this.Name = "frmMain";
             this.Text = "Billiards";
@@ -47,6 +56,8 @@
         }
 
         #endregion
+
+        private System.Windows.Forms.Timer tmrHearbeat;
     }
 }
 

@@ -16,9 +16,15 @@ namespace Pills
 #if (DEBUGGING)
         int _curX = 0;
         int _curY = 0;
+        int b = 0;
+        double k = 0;
 #endif
         int _startVectorX;
         int _startVectorY;
+        CBall _selectedBall;
+
+        int vectorLength;
+        double alphaAngle;
 
         bool showVector;
 
@@ -36,6 +42,8 @@ namespace Pills
         private void GameInit()
         {
             showVector = false;
+            vectorLength = 0;
+            alphaAngle = -300;
             //ball1 = new CBall(156, 342);
             _table = new CTable();
             _table.AddBall(156, 342);
@@ -52,9 +60,14 @@ namespace Pills
 
 #if (DEBUGGING)
             TextRenderer.DrawText(dc, "X=" + _curX.ToString() + "  Y=" + _curY.ToString(), _font,
-                new Rectangle(75, 33, 120, 20), SystemColors.ControlText, _textFlags);
+                new Rectangle(75, 33, 100, 20), SystemColors.ControlText, _textFlags);
+            TextRenderer.DrawText(dc, "Vector len= " + vectorLength.ToString(), _font,
+                new Rectangle(175, 33, 120, 20), SystemColors.ControlText, _textFlags);
+            TextRenderer.DrawText(dc, "α= " + alphaAngle.ToString(), _font,
+                new Rectangle(295, 33, 95, 20), SystemColors.ControlText, _textFlags);
+            TextRenderer.DrawText(dc, "b= " + b.ToString() + " k= " + k.ToString(), _font,
+                new Rectangle(520, 33, 140, 20), SystemColors.ControlText, _textFlags);
 #endif
-            //ball1.DrawImage(dc);
             _table.Balls.ForEach(delegate(CBall ball) 
             {
                 ball.DrawImage(dc);
@@ -74,7 +87,10 @@ namespace Pills
         {
             _curX = e.X;
             _curY = e.Y;
-            Refresh();
+            //if (showVector && _selectedBall != null)
+            //{
+            //    SetBallParms(e.X, e.Y, _selectedBall);
+            //}
         }
 
         private void frmMain_MouseDown(object sender, MouseEventArgs e)
@@ -86,13 +102,164 @@ namespace Pills
             {
                 _startVectorX = _ball.CenterX;
                 _startVectorY = _ball.CenterY;
+                _selectedBall = _ball;
                 showVector = true;
             }
         }
 
         private void frmMain_MouseUp(object sender, MouseEventArgs e)
         {
+            //высчитываем длину вектора, которая будет определять силу удара
+            vectorLength = (int)Math.Sqrt(Math.Pow(e.Y - _startVectorY, 2) + Math.Pow(e.X - _startVectorX, 2));
+            if (_selectedBall != null && vectorLength != 0)
+            {
+                SetBallParms(e.X, e.Y, _selectedBall);
+            }
+            vectorLength = 0;
             showVector = false;
+            _selectedBall = null;
+            tmrHearbeat.Enabled = true;
+        }
+
+        private void tmrHearbeat_Tick(object sender, EventArgs e)
+        {
+            int new_x = 0;
+            int new_y = 0;
+            int step = 0;
+
+            _table.Balls.ForEach(delegate (CBall ball)
+            {
+                if(ball.Power > 0)
+                {
+                    step = Convert.ToInt32(ball.Power / 16);
+                    int dist = step + ball.TotalDistance;
+                    if (ball.Angle != 0)
+                    {
+                        if(ball.IsGrowingY == false && ball.IsGrowingX == false && ball.Angle < 90)
+                        {
+                            //шар летит в левый верхний угол
+                            new_x = Convert.ToInt32(ball.X0 - dist * Math.Cos(ball.Angle * Math.PI / 180.0));
+                            new_y = Convert.ToInt32(ball.Y0 - dist * Math.Sin(ball.Angle * Math.PI / 180.0));
+                        } else if(ball.IsGrowingY == true && ball.IsGrowingX == false && ball.Angle < 90)
+                        {
+                            //шар летит в левый нижний угол
+                            new_x = Convert.ToInt32(ball.X0 - dist * Math.Cos(ball.Angle * Math.PI / 180.0));
+                            new_y = Convert.ToInt32(ball.Y0 + dist * Math.Sin(ball.Angle * Math.PI / 180.0));
+                        } else if(ball.IsGrowingY == true && ball.IsGrowingX == true && ball.Angle < 90)
+                        {
+                            //шар летит в правый нижний угол
+                            new_x = Convert.ToInt32(ball.X0 + dist * Math.Cos(ball.Angle * Math.PI / 180.0));
+                            new_y = Convert.ToInt32(ball.Y0 + dist * Math.Sin(ball.Angle * Math.PI / 180.0));
+                        } else if(ball.IsGrowingY == false && ball.IsGrowingX == true && ball.Angle < 90)
+                        {
+                            //шар летит в правый верхний угол
+                            new_x = Convert.ToInt32(ball.X0 + dist * Math.Cos(ball.Angle * Math.PI / 180.0));
+                            new_y = Convert.ToInt32(ball.Y0 - dist * Math.Sin(ball.Angle * Math.PI / 180.0));
+                        } else if(ball.IsGrowingY == true && ball.Angle == 90)
+                        {
+                            //шар летит строго вверх
+                            new_x = ball.X0;
+                            new_y = ball.Y0 + dist;
+                        } else if(ball.IsGrowingY == false && ball.Angle == 90)
+                        {
+                            //шар летит строго вниз
+                            new_x = ball.X0;
+                            new_y = ball.Y0 - dist;
+                        }
+                    }
+                    else
+                    {
+                        if (ball.IsGrowingX)
+                        {
+                            //движение вправо
+                            new_x = ball.X0 + dist;
+                            new_y = ball.Y0;
+                        }
+                        else
+                        {
+                            //двидение влево
+                            new_x = ball.X0 - dist;
+                            new_y = ball.Y0;
+                        }
+                    }
+                    ball.Move(new_x, new_y);
+                    ball.TotalDistance = dist;
+                    ball.Power -= 1;
+
+                    if(ball.Left <= _table.LeftBorder || ball.Left + 30 >= _table.RightBorder)
+                    {
+                        if (ball.Left < _table.LeftBorder) ball.Left = _table.LeftBorder;
+                        if (ball.Left + 30 >= _table.RightBorder) ball.Left = _table.RightBorder - 30;
+
+                        ball.IsGrowingX = !ball.IsGrowingX;
+                        ball.X0 = ball.CenterX;
+                        ball.Y0 = ball.CenterY;
+                        ball.TotalDistance = 0;
+                    }
+                    if(ball.Top <= _table.TopBorder || ball.Top + 30 >= _table.BottomBorder)
+                    {
+                        if (ball.Top <= _table.TopBorder) ball.Top = _table.TopBorder;
+                        if (ball.Top + 30 >= _table.BottomBorder) ball.Top = _table.BottomBorder - 30;
+
+                        ball.IsGrowingY = !ball.IsGrowingY;
+                        ball.X0 = ball.CenterX;
+                        ball.Y0 = ball.CenterY;
+                        ball.TotalDistance = 0;
+                    }
+                }
+            });
+            Refresh();
+        }
+
+        private void SetBallParms(int e_x, int e_y, CBall _ball)
+        {
+            if (vectorLength > 0)
+            {
+                //считаем угол по разным катетам для повышения точности
+                if (Math.Abs(_startVectorX - e_x) > 25)
+                {
+                    alphaAngle = Math.Asin(Math.Abs(_startVectorY - e_y) / (double)vectorLength) * 180 / Math.PI;
+                }
+                else
+                {
+                    alphaAngle = Math.Acos(Math.Abs(_startVectorX - e_x) / (double)vectorLength) * 180 / Math.PI;
+                }
+
+                if (alphaAngle != 0)
+                {
+                    //движение вверх
+                    if (_startVectorY < e_y) _ball.IsGrowingY = false;
+                    //движение вниз
+                    else _ball.IsGrowingY = true;
+                    //движение влево
+                    if (_startVectorX < e_x) _ball.IsGrowingX = false;
+                    //движение вправо
+                    else _ball.IsGrowingX = true;
+                }
+                else
+                {
+                    _ball.IsGrowingY = true;
+                    //движение строго влево
+                    if (_startVectorX < e_x) _ball.IsGrowingX = false;
+                    //движение строго вправо
+                    else _ball.IsGrowingX = true;
+                }
+
+                //if (_startVectorX != e_x)
+                //{
+                //    k = (_startVectorY - e_y) * 1.0 / (_startVectorX - e_x) * 1.0;
+                //    b = (int)Math.Round(e_y - e_x * k);
+                //}
+
+                _ball.Angle = alphaAngle;
+                //_ball.B = b;
+                //_ball.K = k;
+                if (vectorLength > 400) vectorLength = 400;
+                _ball.Power = vectorLength;
+                _ball.X0 = _ball.CenterX;
+                _ball.Y0 = _ball.CenterY;
+                _ball.TotalDistance = 0;
+            }
         }
     }
 }
