@@ -36,7 +36,7 @@ namespace Pills
         {
             foreach(CBall ball in _balls)
             {
-                if (Math.Pow((x - ball.CenterX), 2) + Math.Pow((y - ball.CenterY), 2) < Math.Pow(ball.Radius, 2))
+                if (Math.Pow((x - ball.CenterX), 2) + Math.Pow((y - ball.CenterY), 2) < Math.Pow(CBall.Radius, 2))
                 {
                     return ball;
                 }

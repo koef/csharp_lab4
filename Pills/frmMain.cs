@@ -187,20 +187,20 @@ namespace Pills
                     ball.TotalDistance = dist;
                     ball.Power -= 1;
 
-                    if(ball.Left <= _table.LeftBorder || ball.Left + 30 >= _table.RightBorder)
+                    if(ball.Left <= _table.LeftBorder || ball.Left + CBall.Radius * 2 >= _table.RightBorder)
                     {
                         if (ball.Left < _table.LeftBorder) ball.Left = _table.LeftBorder;
-                        if (ball.Left + 30 >= _table.RightBorder) ball.Left = _table.RightBorder - 30;
+                        if (ball.Left + CBall.Radius * 2 >= _table.RightBorder) ball.Left = _table.RightBorder - CBall.Radius * 2;
 
                         ball.IsGrowingX = !ball.IsGrowingX;
                         ball.X0 = ball.CenterX;
                         ball.Y0 = ball.CenterY;
                         ball.TotalDistance = 0;
                     }
-                    if(ball.Top <= _table.TopBorder || ball.Top + 30 >= _table.BottomBorder)
+                    if(ball.Top <= _table.TopBorder || ball.Top + CBall.Radius * 2 >= _table.BottomBorder)
                     {
                         if (ball.Top <= _table.TopBorder) ball.Top = _table.TopBorder;
-                        if (ball.Top + 30 >= _table.BottomBorder) ball.Top = _table.BottomBorder - 30;
+                        if (ball.Top + CBall.Radius * 2 >= _table.BottomBorder) ball.Top = _table.BottomBorder - CBall.Radius * 2;
 
                         ball.IsGrowingY = !ball.IsGrowingY;
                         ball.X0 = ball.CenterX;
@@ -209,13 +209,33 @@ namespace Pills
                     }
 
                     //столкновение двух шаров
-                    //_table.Balls.ForEach(delegate (CBall _ball)
                     foreach (CBall _ball in _table.Balls)
                     {
                         if (ball.CenterY == _ball.CenterY && ball.CenterX == _ball.CenterX) continue;
                         int distanceBetweenBalls = (int)Math.Sqrt(Math.Pow(ball.CenterY - _ball.CenterY, 2) + Math.Pow(ball.CenterX - _ball.CenterX, 2));
-                        if (distanceBetweenBalls <= 30)
+                        if (distanceBetweenBalls < CBall.Radius * 2)
                         {
+                            //так как шары чаще всего взаимопроникают друг в друга, раздвигаем их на расстояние 2R - 1
+                            int Xa2 = ball.CenterX;
+                            int Ya2 = ball.CenterY;
+                            if (ball.CenterX < _ball.CenterX)
+                            {
+                                while ((int)Math.Sqrt(Math.Pow(Ya2 - _ball.CenterY, 2) + Math.Pow(Xa2 - _ball.CenterX, 2)) < CBall.Radius * 2)
+                                {
+                                    Ya2 = (int)(ball.K * Xa2 + ball.B);
+                                    Xa2 -= 1;
+                                }
+                            }
+                            else
+                            {
+                                while ((int)Math.Sqrt(Math.Pow(Ya2 - _ball.CenterY, 2) + Math.Pow(Xa2 - _ball.CenterX, 2)) < CBall.Radius * 2)
+                                {
+                                    Ya2 = (int)(ball.K * Xa2 + ball.B);
+                                    Xa2 += 1;
+                                }
+                            }
+                            //Ya2 = (int)(ball.K * Xa2 + ball.B);
+                            ball.Move(Xa2, Ya2);
                             ball.Power = 0;
                             _ball.Power = 0;
                         }
@@ -259,15 +279,15 @@ namespace Pills
                     else _ball.IsGrowingX = true;
                 }
 
-                //if (_startVectorX != e_x)
-                //{
-                //    k = (_startVectorY - e_y) * 1.0 / (_startVectorX - e_x) * 1.0;
-                //    b = (int)Math.Round(e_y - e_x * k);
-                //}
+                if (_startVectorX != e_x)
+                {
+                    k = (_startVectorY - e_y) * 1.0 / (_startVectorX - e_x) * 1.0;
+                    b = (int)Math.Round(e_y - e_x * k);
+                }
 
                 _ball.Angle = alphaAngle;
-                //_ball.B = b;
-                //_ball.K = k;
+                _ball.B = b;
+                _ball.K = k;
                 if (vectorLength > 400) vectorLength = 400;
                 _ball.Power = vectorLength;
                 _ball.X0 = _ball.CenterX;

@@ -10,14 +10,15 @@ namespace Pills
     class CBall : CImageBase
     {
         double _angle = 0;
-        //int _b = 0;
-        //double _k = 0;
+        int _b = 0;
+        double _k = 0;
         int _power = 0;
         int _totalDistance = 0;
         int _x0 = 0;
         int _y0 = 0;
         bool _isGrowingY = true;
         bool _isGrowingX = true;
+        public static int Radius = 15;
 
         public CBall(int _Left, int _Top) : base(Resources.ball)
         {
@@ -32,8 +33,8 @@ namespace Pills
         }
 
         public double Angle { get { return _angle; } set { _angle = value; } }
-        //public double K { get { return _k; } set { _k = value; } }
-        //public int B { get { return _b; } set { _b = value; } }
+        public double K { get { return _k; } set { _k = value; } }
+        public int B { get { return _b; } set { _b = value; } }
         public int Power { get { return _power; } set { _power = value; } }
         public bool IsGrowingY { get { return _isGrowingY; } set { _isGrowingY = value; } }
         public bool IsGrowingX { get { return _isGrowingX; } set { _isGrowingX = value; } }
@@ -57,12 +58,12 @@ namespace Pills
             }
         }
 
-        public int Radius
-        {
-            get
-            {
-                return 15;
-            }
-        }
+        //public int Radius
+        //{
+        //    get
+        //    {
+        //        return 15;
+        //    }
+        //}
     }
 }
