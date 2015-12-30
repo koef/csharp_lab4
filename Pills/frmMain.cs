@@ -47,6 +47,7 @@ namespace Pills
             //ball1 = new CBall(156, 342);
             _table = new CTable();
             _table.AddBall(156, 342);
+            _table.AddBall(257, 230);
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -177,7 +178,7 @@ namespace Pills
                         }
                         else
                         {
-                            //двидение влево
+                            //движение влево
                             new_x = ball.X0 - dist;
                             new_y = ball.Y0;
                         }
@@ -205,6 +206,19 @@ namespace Pills
                         ball.X0 = ball.CenterX;
                         ball.Y0 = ball.CenterY;
                         ball.TotalDistance = 0;
+                    }
+
+                    //столкновение двух шаров
+                    //_table.Balls.ForEach(delegate (CBall _ball)
+                    foreach (CBall _ball in _table.Balls)
+                    {
+                        if (ball.CenterY == _ball.CenterY && ball.CenterX == _ball.CenterX) continue;
+                        int distanceBetweenBalls = (int)Math.Sqrt(Math.Pow(ball.CenterY - _ball.CenterY, 2) + Math.Pow(ball.CenterX - _ball.CenterX, 2));
+                        if (distanceBetweenBalls <= 30)
+                        {
+                            ball.Power = 0;
+                            _ball.Power = 0;
+                        }
                     }
                 }
             });
