@@ -248,8 +248,8 @@ namespace Pills
                             //высчитываем угол движения шара А после столкновения
                             ball.Angle = 180 - (_ball.Angle + (90 - (ball.Angle + (90 - _ball.Angle))));
 
-                            ball.Power = 0;
-                            _ball.Power = 0;
+                            ball.Power = ball.Power / 2;
+                            _ball.Power = ball.Power;
                         }
                     }
                 }
