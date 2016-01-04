@@ -236,6 +236,18 @@ namespace Pills
                             }
                             //Ya2 = (int)(ball.K * Xa2 + ball.B);
                             ball.Move(Xa2, Ya2);
+
+                            //находим координаты точки соприкосновения
+                            int touchpointX = 0;
+                            int touchpointY = 0;
+                            touchpointX = _ball.CenterX + (ball.CenterX - _ball.CenterX) / 2;
+                            touchpointY = _ball.CenterY + (ball.CenterY - _ball.CenterY) / 2;
+
+                            SetBallParms(touchpointX, touchpointY, _ball);
+
+                            //высчитываем угол движения шара А после столкновения
+                            ball.Angle = 180 - (_ball.Angle + (90 - (ball.Angle + (90 - _ball.Angle))));
+
                             ball.Power = 0;
                             _ball.Power = 0;
                         }
